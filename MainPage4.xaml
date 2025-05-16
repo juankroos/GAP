@@ -1,0 +1,138 @@
+﻿<Page
+    x:Class="GAP.MainPage4"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:GAP"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <ScrollViewer HorizontalScrollMode="Auto" VerticalScrollBarVisibility="Auto" VerticalScrollMode="Auto">
+        <Grid Height="1000">
+            <StackPanel Orientation="Vertical" Spacing="20" Margin="0,20,0,20">
+                <!-- Barre de recherche -->
+                <TextBox x:Name="searchTextBox" 
+                         Header="Rechercher un livre" 
+                         MaxLength="250" 
+                         PlaceholderText="Entrez un titre ou un auteur..." 
+                         InputScope="Text" 
+                         Width="900" 
+                         Height="50"
+                         ToolTipService.ToolTip="Entrez un titre ou un auteur pour la recherche"
+                         AutomationProperties.Name="Recherche"
+                         TextChanged="SearchBooks_TextChanged"/>
+
+                <!-- Les autres champs pour l'ajout/modification d'un livre -->
+                <TextBox x:Name="bookName" 
+                         Header="Titre" 
+                         MaxLength="250" 
+                         PlaceholderText="Ex : BUDE" 
+                         InputScope="PersonalFullName" 
+                         Width="900" 
+                         Height="50"
+                         ToolTipService.ToolTip="Entrez le titre du livre"
+                         AutomationProperties.Name="Nom du livre"/>
+
+                <TextBox x:Name="autorName" 
+                         Header="Nom de l'auteur" 
+                         MaxLength="250" 
+                         PlaceholderText="Ex : BUDE" 
+                         InputScope="PersonalFullName" 
+                         Width="900" 
+                         Height="50"
+                         ToolTipService.ToolTip="Entrez le nom complet de l'auteur"
+                         AutomationProperties.Name="Nom de l'auteur"/>
+
+                <TextBox x:Name="dateName" 
+                         Header="Date de publication" 
+                         MaxLength="250" 
+                         PlaceholderText="Ex : 01/01/2023" 
+                         InputScope="Text" 
+                         Width="900" 
+                         Height="50"
+                         ToolTipService.ToolTip="Entrez la date de publication"
+                         AutomationProperties.Name="Date de publication"/>
+
+                <TextBox x:Name="descriptionName" 
+                         Header="Description" 
+                         MaxLength="500" 
+                         PlaceholderText="Ex : Résumé du livre" 
+                         InputScope="Text" 
+                         Width="900" 
+                         Height="100"
+                         TextWrapping="Wrap"
+                         AcceptsReturn="True"
+                         ToolTipService.ToolTip="Entrez une description"
+                         AutomationProperties.Name="Description"/>
+
+                <TextBox x:Name="statuName" 
+                         Header="Statut du livre" 
+                         MaxLength="100" 
+                         PlaceholderText="Disponible/Emprunté" 
+                         InputScope="Text" 
+                         Width="900" 
+                         Height="50"
+                         ToolTipService.ToolTip="Entrez le statut du livre"
+                         AutomationProperties.Name="Statut"/>
+
+                <Button x:Name="enregistrerButton" 
+                        Content="Enregistrer" 
+                        HorizontalAlignment="Center" 
+                        Width="200" 
+                        Height="50"
+                        Background="{ThemeResource AccentButtonBackground}" 
+                        Foreground="White"
+                        FontSize="16"
+                        Click="SaveClient_Click"
+                        ToolTipService.ToolTip="Cliquez pour enregistrer les informations"
+                        AutomationProperties.Name="Bouton Enregistrer"/>
+            </StackPanel>
+
+            <ListView x:Name="clientListView" Margin="300,580,10,20">
+                <ListView.HeaderTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Titre" Width="200" FontWeight="Bold"/>
+                            <TextBlock Text="Auteur" Width="200" FontWeight="Bold"/>
+                            <TextBlock Text="Date de publication" Width="200" FontWeight="Bold"/>
+                            <TextBlock Text="Description" Width="200" FontWeight="Bold"/>
+                            <TextBlock Text="Statut" Width="200" FontWeight="Bold"/>
+                            <TextBlock Text="Actions" Width="300" FontWeight="Bold"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.HeaderTemplate>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ScrollViewer VerticalScrollMode="Auto" VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Auto">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Titre}" Width="200"/>
+                                <TextBlock Text="{Binding Auteur}" Width="200"/>
+                                <TextBlock Text="{Binding DatePublication}" Width="200"/>
+                                <TextBlock Text="{Binding Description}" Width="200"/>
+                                <StackPanel Orientation="Horizontal" Width="300" HorizontalAlignment="Right" Spacing="10">
+                                    <Button Content="Modifier" 
+                                        Width="100" 
+                                        Height="30" 
+                                        Background="DodgerBlue" 
+                                        Foreground="White" 
+                                        Click="EditBook_Click" 
+                                        Tag="{Binding}" 
+                                        ToolTipService.ToolTip="Cliquez pour modifier cet élément"/>
+                                    <Button Content="Supprimer" 
+                                        Width="100" 
+                                        Height="30" 
+                                        Background="Crimson" 
+                                        Foreground="White" 
+                                        Click="DeleteClient_Click" 
+                                        Tag="{Binding}" 
+                                        ToolTipService.ToolTip="Cliquez pour supprimer cet élément"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+    </ScrollViewer>
+</Page>

@@ -1,0 +1,160 @@
+using System;
+using System.Collections.ObjectModel;
+using System.ServiceModel;
+using Npgsql;
+using Windows.UI.Popups;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+
+namespace GAP
+{
+    public sealed partial class MainPage1 : Page
+    {
+        private const string ConnectionString = "Host=localhost;Username=postgres;Password=0000;Database=Agenda";
+
+        public MainPage1()
+        {
+            this.InitializeComponent();
+            ChargerClients();
+        }
+        public void clear()
+        {
+            clientName.Text = " ";
+            telephoneClient.Text = " ";
+            emailClient.Text = " ";
+            passwordClient.Password = " ";
+            codeCNI.Text = " ";
+        }
+
+        public class Client
+        {
+            public string Nom { get; set; }
+            public string Telephone { get; set; }
+            public string Email { get; set; }
+        }
+
+        private async void ChargerClients()
+        {
+            try
+            {
+                using (var connection = new NpgsqlConnection(ConnectionString))
+                {
+                    await connection.OpenAsync();
+
+                    string query = "SELECT nom, telephone, email FROM utilisateurs";
+                    using (var command = new NpgsqlCommand(query, connection))
+                    {
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            var clients = new ObservableCollection<Client>();
+
+                            while (await reader.ReadAsync())
+                            {
+                                clients.Add(new Client
+                                {
+                                    Nom = reader.GetString(0),
+                                    Telephone = reader.GetString(1),
+                                    Email = reader.GetString(2)
+                                });
+                            }
+
+                            // Lier les données au ListView
+                            clientListView.ItemsSource = clients;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var errorDialog = new MessageDialog($"Erreur : {ex.Message}");
+                await errorDialog.ShowAsync();
+            }
+        }
+
+
+        private async void EnregistrerButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Récupérer les valeurs des champs
+            string nom = clientName.Text;
+            string telephone = telephoneClient.Text;
+            string email = emailClient.Text;
+            string motDePasse = passwordClient.Password; // Pour PasswordBox
+            string cni = codeCNI.Text;
+
+            // Valider les champs
+            if (string.IsNullOrWhiteSpace(nom) || string.IsNullOrWhiteSpace(telephone) ||
+                string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(motDePasse) ||
+                string.IsNullOrWhiteSpace(cni))
+            {
+                // Afficher une erreur si des champs sont vides
+                var dialog = new MessageDialog("Veuillez remplir tous les champs.");
+                await dialog.ShowAsync();
+                return;
+            }
+
+            // Enregistrer dans la base de données
+            try
+            {
+                using (var connection = new NpgsqlConnection(ConnectionString))
+                {
+                    await connection.OpenAsync();
+
+                    string query = @"
+                        INSERT INTO utilisateurs (nom, telephone, email, mot_de_passe, cni)
+                        VALUES (@nom, @telephone, @email, @motDePasse, @cni)";
+
+                    using (var command = new NpgsqlCommand(query, connection))
+                    {
+                        // Ajouter les paramètres
+                        command.Parameters.AddWithValue("nom", nom);
+                        command.Parameters.AddWithValue("telephone", telephone);
+                        command.Parameters.AddWithValue("email", email);
+                        command.Parameters.AddWithValue("motDePasse", motDePasse);
+                        command.Parameters.AddWithValue("cni", cni);
+                        
+
+                        //await command.ExecuteNonQueryAsync();
+                        int ligne = command.ExecuteNonQuery();
+                        if (ligne > 0)
+                        {
+                            ContentDialog boite = new ContentDialog
+                            {
+                                Title = "message de success",
+                                Content = "Compte cree avec success",
+                                CloseButtonText = "OK",
+                            };
+                            boite.ShowAsync();
+                            clear();
+                        }
+                        else
+                        {
+                            ContentDialog boite = new ContentDialog
+                            {
+                                Title = "message d' erreur",
+                                Content = "echec de creation de compte",
+                                CloseButtonText = "D'accord",
+                            };
+                            boite.ShowAsync();
+                            clear();
+                        }
+                    }
+                }
+
+                // Afficher un message de succès
+                //var successDialog = new MessageDialog("Données enregistrées avec succès !");
+                //await successDialog.ShowAsync();
+            }
+            catch (Exception ex)
+            {
+                // Gérer les erreurs
+                var errorDialog = new MessageDialog($"Erreur : {ex.Message}");
+                await errorDialog.ShowAsync();
+            }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(MainPage));
+        }
+    }
+}

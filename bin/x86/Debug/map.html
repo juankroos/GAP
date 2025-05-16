@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Leaflet Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+    <style>
+        #map {
+            height: 100vh; /* Fullscreen height */
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script>
+        // Initialiser la carte
+        var map = L.map('map').setView([51.505, -0.09], 13); // Coordonn�es de Londres
+
+        // Ajouter un fond de carte (OpenStreetMap)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '� OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Marqueur initial avec les coordonn�es par d�faut
+        var marker = L.marker([51.505, -0.09]).addTo(map)
+            .bindPopup('A pretty marker.<br> Easily customizable.')
+            .openPopup();
+
+        // Fonction pour r�cup�rer les positions depuis l'API
+        async function fetchPosition() {
+            try {
+                const response = await fetch('http://localhost:3000/get-positions'); // URL de l'API
+                const data = await response.json();
+
+                // Si de nouvelles coordonn�es sont obtenues
+                if (data.latitude && data.longitude) {
+                    const lat = parseFloat(data.latitude);
+                    const lon = parseFloat(data.longitude);
+
+                    // Mettre � jour la position du marqueur
+                    marker.setLatLng([lat, lon]);
+
+                    // Mettre � jour le popup avec la nouvelle position
+                    marker.setPopupContent(`Position: ${lat}, ${lon}`).openPopup();
+                }
+            } catch (error) {
+                console.error('Erreur lors de la r�cup�ration des donn�es:', error);
+            }
+        }
+
+        // Mettre � jour la position toutes les 1 seconde
+        setInterval(fetchPosition, 1000);
+    </script>
+</body>
+</html>

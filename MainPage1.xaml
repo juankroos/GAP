@@ -1,0 +1,133 @@
+﻿<Page
+    x:Class="GAP.MainPage1"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:GAP"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    Height="944" Width="1443">
+    <ScrollViewer HorizontalScrollMode="Auto" VerticalScrollBarVisibility="Auto" VerticalScrollMode="Auto">
+        <StackPanel Margin="0,0,0,10" Width="1444">
+            <!-- Formulaire de création de compte -->
+            <Grid Margin="0,0,0,10">
+                <RelativePanel Margin="0,0,0,0" Width="1444" Height="974" Padding="50">
+                    <StackPanel Width="1000" Spacing="20">
+                        <TextBlock x:Name="Label" 
+                                   Text="Formulaire de création de compte" 
+                                   HorizontalAlignment="Center" 
+                                   Margin="0,0,0,20" 
+                                   FontSize="24"
+                                   FontWeight="Bold"/>
+
+                        <TextBox x:Name="clientName" 
+                                 Header="Nom du client" 
+                                 MaxLength="250" 
+                                 PlaceholderText="Exp : BUDE" 
+                                 InputScope="PersonalFullName" 
+                                 Width="900" 
+                                 Height="50"
+                                 ToolTipService.ToolTip="Entrez le nom complet du client"
+                                 AutomationProperties.Name="Nom du client"/>
+
+                        <TextBox x:Name="telephoneClient" 
+                                 Header="Numéro de téléphone" 
+                                 MaxLength="15" 
+                                 PlaceholderText="Exemple : +237 6XX XXX XXX" 
+                                 Width="900" 
+                                 Height="50"
+                                 ToolTipService.ToolTip="Entrez le numéro de téléphone du client"
+                                 AutomationProperties.Name="Numéro de téléphone"/>
+
+                        <TextBox x:Name="emailClient" 
+                                 Header="Adresse email" 
+                                 PlaceholderText="Exemple : client@email.com" 
+                                 Width="900" 
+                                 Height="50"
+                                 ToolTipService.ToolTip="Entrez une adresse email valide"
+                                 AutomationProperties.Name="Adresse email"/>
+
+                        <PasswordBox x:Name="passwordClient" 
+                                     Header="Votre mot de passe" 
+                                     MaxLength="20" 
+                                     PlaceholderText="Mot de passe sécurisé" 
+                                     Width="900" 
+                                     Height="50"
+                                     ToolTipService.ToolTip="Entrez un mot de passe sécurisé"
+                                     AutomationProperties.Name="Mot de passe"/>
+
+                        <TextBox x:Name="codeCNI" 
+                                 Header="Numéro de CNI" 
+                                 MaxLength="20" 
+                                 PlaceholderText="Exemple : 123456789" 
+                                 Width="900" 
+                                 Height="50"
+                                 ToolTipService.ToolTip="Entrez le numéro de carte d'identité nationale"
+                                 AutomationProperties.Name="Numéro de CNI"/>
+
+                        <Button x:Name="enregistrerButton" 
+                                Content="Enregistrer" 
+                                HorizontalAlignment="Center" 
+                                Width="200" 
+                                Height="50"
+                                Background="{ThemeResource AccentButtonBackground}" 
+                                Foreground="White"
+                                FontSize="16"
+                                Click="SaveClient_Click"
+                                ToolTipService.ToolTip="Cliquez pour enregistrer les informations"
+                                AutomationProperties.Name="Bouton Enregistrer"/>
+
+                    </StackPanel>
+                </RelativePanel>
+            </Grid>
+
+            <!-- ListView pour afficher les données de la base de données -->
+            <TextBlock Text="Liste des clients enregistrés" 
+                       FontSize="24" 
+                       FontWeight="Bold" 
+                       Margin="0,20,0,10" 
+                       HorizontalAlignment="Center"/>
+
+            <ListView x:Name="clientListView" Width="900" Height="400" Margin="0,0,0,10">
+                <ListView.HeaderTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Nom" Width="200" FontWeight="Bold"/>
+                            <TextBlock Text="Téléphone" Width="200" FontWeight="Bold"/>
+                            <TextBlock Text="Email" Width="200" FontWeight="Bold"/>
+                            <TextBlock Text="Actions" Width="300" FontWeight="Bold"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.HeaderTemplate>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Nom}" Width="200"/>
+                            <TextBlock Text="{Binding Telephone}" Width="200"/>
+                            <TextBlock Text="{Binding Email}" Width="200"/>
+                            <StackPanel Orientation="Horizontal" Width="300" HorizontalAlignment="Right" Spacing="10">
+                                <Button Content="Modifier" 
+                                        Width="100" 
+                                        Height="30" 
+                                        Background="DodgerBlue" 
+                                        Foreground="White" 
+                                        Click="EditClient_Click" 
+                                        Tag="{Binding}" 
+                                        ToolTipService.ToolTip="Cliquez pour modifier cet élément"/>
+                                <Button Content="Supprimer" 
+                                        Width="100" 
+                                        Height="30" 
+                                        Background="Crimson" 
+                                        Foreground="White" 
+                                        Click="DeleteClient_Click" 
+                                        Tag="{Binding}" 
+                                        ToolTipService.ToolTip="Cliquez pour supprimer cet élément"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackPanel>
+    </ScrollViewer>
+</Page>
